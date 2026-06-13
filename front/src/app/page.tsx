@@ -20,6 +20,8 @@ export default function Home() {
       .catch(() => setPosts([]));
   }, []);
 
+  console.log("posts", posts);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -46,7 +48,7 @@ export default function Home() {
               >
                 <h2 className="font-medium">{post.title}</h2>
                 <p className="text-sm text-gray-500 mt-1">
-                  {post.author.nickname} &middot;{" "}
+                  {post?.title} &middot;{" "}
                   {new Date(post.createdAt).toLocaleDateString("ko")}
                 </p>
               </Link>

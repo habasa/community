@@ -16,7 +16,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
     try {
-      await api("/auth/register", {
+      await api("/user", {
         method: "POST",
         body: JSON.stringify({ email, nickname, password }),
       });
