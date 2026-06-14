@@ -15,10 +15,13 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     try {
+      console.log("data", email, password);
       const data = await api("/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
+      console.log("data", data);
+
       localStorage.setItem("token", data.access_token);
       router.push("/");
     } catch {
