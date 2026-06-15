@@ -14,6 +14,9 @@ export default function WritePage() {
     try {
       await api("/posts", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify({ title, content }),
       });
       router.push("/");

@@ -17,8 +17,15 @@ export class PostService {
     return this.postRepository.find();
   }
 
-  async create(createPostDto: CreatePostDto): Promise<PostEntity> {
-    return this.postRepository.save(createPostDto);
+  async findOne(id: number): Promise<PostEntity | null> {
+    return this.postRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+  }
+
+  async create(createPostDto: CreatePostDto, user): Promise<PostEntity> {
+    return this.postRepository.save({ ...createPostDto, user });
   }
 
   async update(

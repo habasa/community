@@ -27,7 +27,9 @@ export default function PostDetail() {
   const [comment, setComment] = useState("");
 
   useEffect(() => {
-    api(`/posts/${id}`).then(setPost).catch(() => {});
+    api(`/posts/${id}`)
+      .then(setPost)
+      .catch(() => {});
   }, [id]);
 
   const handleComment = async (e: React.FormEvent) => {
@@ -47,6 +49,8 @@ export default function PostDetail() {
     return <p className="text-gray-500 text-center py-20">로딩 중...</p>;
   }
 
+  console.log("post.createdAt", post);
+
   return (
     <div>
       <Link href="/" className="text-sm text-gray-500 hover:underline">
@@ -56,7 +60,7 @@ export default function PostDetail() {
       <article className="mt-4">
         <h1 className="text-2xl font-bold">{post.title}</h1>
         <p className="text-sm text-gray-500 mt-2">
-          {post.author.nickname} &middot;{" "}
+          {/* {post.author.nickname} &middot;{" "} */}
           {new Date(post.createdAt).toLocaleDateString("ko")}
         </p>
         <div className="mt-6 whitespace-pre-wrap leading-relaxed">
@@ -65,9 +69,7 @@ export default function PostDetail() {
       </article>
 
       <section className="mt-10 border-t pt-6">
-        <h2 className="font-bold mb-4">
-          댓글 {post.comments?.length || 0}
-        </h2>
+        <h2 className="font-bold mb-4">댓글 {post.comments?.length || 0}</h2>
 
         <form onSubmit={handleComment} className="flex gap-2 mb-6">
           <input
