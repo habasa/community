@@ -11,8 +11,8 @@ export class JwtAuthGuard implements CanActivate {
     const token = request.headers['authorization'].split(' ')[1];
 
     try {
-      const isValidToken = this.jwtService.verify(token);
-      request.user = isValidToken; // { id, email } 저장
+      const userInfo = this.jwtService.verify(token);
+      request.user = userInfo; // { id, email } 저장
 
       return true;
     } catch (error) {
