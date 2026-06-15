@@ -12,7 +12,7 @@ export class JwtAuthGuard implements CanActivate {
 
     try {
       const isValidToken = this.jwtService.verify(token);
-      request.user = isValidToken;
+      request.user = isValidToken; // { id, email } 저장
 
       return true;
     } catch (error) {
