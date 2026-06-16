@@ -19,7 +19,11 @@ export class UserService {
     return this.userRepository.save(createUserDto);
   }
 
+  // 엔티티에서 막아놨는데, 로그인할때는 비번이 필요하잖아요 그래서 로그인로직에는 필요
   async findByEmail(email: string): Promise<UserEntity | null> {
-    return this.userRepository.findOne({ where: { email } });
+    return this.userRepository.findOne({
+      where: { email },
+      select: { id: true, email: true, nickname: true, password: true },
+    });
   }
 }

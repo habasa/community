@@ -49,7 +49,7 @@ export default function PostDetail() {
     return <p className="text-gray-500 text-center py-20">로딩 중...</p>;
   }
 
-  console.log("post.createdAt", post);
+  console.log("postData", post);
 
   return (
     <div>
@@ -63,6 +63,7 @@ export default function PostDetail() {
           {/* {post.author.nickname} &middot;{" "} */}
           {new Date(post.createdAt).toLocaleDateString("ko")}
         </p>
+        <div>{post?.user?.nickname}</div>
         <div className="mt-6 whitespace-pre-wrap leading-relaxed">
           {post.content}
         </div>
