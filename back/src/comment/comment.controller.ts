@@ -35,9 +35,9 @@ export class CommentController {
   }
 }
 
-// @Req() req는 request 전체를 가져오는 거예요. 그래서 req.body, req.params, req.headers 다 접근할 수 있어요.
+// @Req() req는 request 전체를 가져오는 거예요. 그래서 req.body, req.params, req.headers 다 접근 가능
 
-// 근데 우리가 req.user를 쓰는 이유는 — Guard가 토큰을 검증하고 request.user에 유저 정보를 넣어줬기 때문이에요. 이건 프론트가 직접 보낸 게 아니라 Guard가 중간에 넣어준 거예요!
+// 근데 우리가 req.user를 쓰는 이유는 — Guard가 토큰을 검증하고 request.user에 유저 정보를 넣어줬기 때문이에요. 이건 프론트가 직접 보낸 게 아니라 Guard가 중간에 넣어줌,.
 
 // 정리하면:
 
