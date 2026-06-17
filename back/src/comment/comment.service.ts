@@ -11,14 +11,23 @@ export class CommentService {
     private readonly commentRepository: Repository<CommentEntity>,
   ) {}
 
-  async findOne(id: number): Promise<CommentEntity | null> {
-    return this.commentRepository.findOne({ where: { id } });
+  async findByPostId(postId: number): Promise<CommentEntity[] | null> {
+    return this.commentRepository.find({
+      where: { post: { id: postId } },
+      relations: { user: true },
+    });
   }
 
+  // save에서는 where안씀
   async create(
+    postId: number,
     createCommentDto: CreateCommentDto,
     user,
   ): Promise<CommentEntity> {
-    return this.commentRepository.save({ ...createCommentDto, user });
+    return this.commentRepository.save({
+      ...createCommentDto,
+      post: { id: postId },
+      user,
+    });
   }
 }

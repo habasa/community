@@ -16,19 +16,22 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class CommentController {
   constructor(private commentService: CommentService) {}
 
-  @Get(':id') // 콜론이 있어야 파라미터로 인식함.
-  async findOne(@Param('id') id: number): Promise<CommentEntity | null> {
-    return this.commentService.findOne(id);
+  @Get('post/:postId')
+  async findByPostId(
+    @Param('postId') postId: number,
+  ): Promise<CommentEntity[] | null> {
+    return this.commentService.findByPostId(postId);
   }
 
   // 아무나 쓰면 안되니까 가드를 건다.
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('post/:postId')
   async create(
+    @Param('postId') postId: number,
     @Body() createCommentDto: CreateCommentDto,
     @Req() req, // 프론트 요청 전부 다 가져옴.
   ): Promise<CommentEntity> {
-    return this.commentService.create(createCommentDto, req.user);
+    return this.commentService.create(postId, createCommentDto, req.user);
   }
 }
 

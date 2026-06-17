@@ -5,51 +5,55 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
-interface Comment {
+interface CommentData {
   id: number;
   content: string;
-  author: { nickname: string };
-  createdAt: string;
+  user: { nickname: string };
 }
 
 interface Post {
   id: number;
   title: string;
   content: string;
-  author: { nickname: string };
-  createdAt: string;
-  comments: Comment[];
+  user: { nickname: string };
 }
 
 export default function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
+  const [comments, setComments] = useState<CommentData[]>([]);
   const [comment, setComment] = useState("");
+
+  const fetchComments = () => {
+    api(`/comment/post/${id}`).then(setComments).catch(() => {});
+  };
 
   useEffect(() => {
     api(`/posts/${id}`)
       .then(setPost)
       .catch(() => {});
+    fetchComments();
   }, [id]);
 
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!comment.trim()) return;
     try {
-      await api(`/posts/${id}/comments`, {
+      await api(`/comment/post/${id}`, {
         method: "POST",
         body: JSON.stringify({ content: comment }),
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setComment("");
-      api(`/posts/${id}`).then(setPost);
+      fetchComments();
     } catch {}
   };
 
   if (!post) {
     return <p className="text-gray-500 text-center py-20">로딩 중...</p>;
   }
-
-  console.log("postData", post);
 
   return (
     <div>
@@ -60,17 +64,15 @@ export default function PostDetail() {
       <article className="mt-4">
         <h1 className="text-2xl font-bold">{post.title}</h1>
         <p className="text-sm text-gray-500 mt-2">
-          {/* {post.author.nickname} &middot;{" "} */}
-          {new Date(post.createdAt).toLocaleDateString("ko")}
+          {post.user?.nickname}
         </p>
-        <div>{post?.user?.nickname}</div>
         <div className="mt-6 whitespace-pre-wrap leading-relaxed">
           {post.content}
         </div>
       </article>
 
       <section className="mt-10 border-t pt-6">
-        <h2 className="font-bold mb-4">댓글 {post.comments?.length || 0}</h2>
+        <h2 className="font-bold mb-4">댓글 {comments.length}</h2>
 
         <form onSubmit={handleComment} className="flex gap-2 mb-6">
           <input
@@ -88,12 +90,9 @@ export default function PostDetail() {
         </form>
 
         <ul className="space-y-4">
-          {post.comments?.map((c) => (
+          {comments.map((c) => (
             <li key={c.id} className="text-sm">
-              <span className="font-medium">{c.author.nickname}</span>
-              <span className="text-gray-400 ml-2">
-                {new Date(c.createdAt).toLocaleDateString("ko")}
-              </span>
+              <span className="font-medium">{c.user?.nickname}</span>
               <p className="mt-1">{c.content}</p>
             </li>
           ))}
