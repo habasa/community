@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
@@ -20,6 +20,7 @@ interface Post {
 
 export default function PostDetail() {
   const { id } = useParams();
+  const router = useRouter();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<CommentData[]>([]);
   const [comment, setComment] = useState("");
@@ -34,6 +35,36 @@ export default function PostDetail() {
       .catch(() => {});
     fetchComments();
   }, [id]);
+
+  const handleDelete = async () => {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+    try {
+      await api(`/posts/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      router.push("/");
+    } catch {
+      alert("본인의 게시글만 삭제할 수 있습니다.");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (!confirm("댓글을 삭제하시겠습니까?")) return;
+    try {
+      await api(`/comment/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      fetchComments();
+    } catch {
+      alert("본인의 댓글만 삭제할 수 있습니다.");
+    }
+  };
 
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +100,12 @@ export default function PostDetail() {
         <div className="mt-6 whitespace-pre-wrap leading-relaxed">
           {post.content}
         </div>
+        <button
+          onClick={handleDelete}
+          className="mt-4 text-sm text-red-500 hover:underline"
+        >
+          삭제
+        </button>
       </article>
 
       <section className="mt-10 border-t pt-6">
@@ -94,6 +131,12 @@ export default function PostDetail() {
             <li key={c.id} className="text-sm">
               <span className="font-medium">{c.user?.nickname}</span>
               <p className="mt-1">{c.content}</p>
+              <button
+                onClick={() => handleDeleteComment(c.id)}
+                className="text-red-400 text-xs hover:underline mt-1"
+              >
+                삭제
+              </button>
             </li>
           ))}
         </ul>

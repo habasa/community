@@ -47,9 +47,10 @@ export class PostController {
     return this.postService.update(id, updatePostDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: number) {
-    return this.postService.remove(id);
+  async remove(@Param('id') id: number, @Req() req) {
+    return this.postService.remove(id, req.user);
   }
 }
 

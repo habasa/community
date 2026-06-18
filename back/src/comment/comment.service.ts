@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentEntity } from './comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,5 +29,18 @@ export class CommentService {
       post: { id: postId },
       user,
     });
+  }
+
+  async removeComment(id: number, user: any): Promise<void> {
+    const comment = await this.commentRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+
+    if (comment?.user.id === user.id) {
+      await this.commentRepository.delete(id);
+    } else {
+      throw new UnauthorizedException('본인의 댓글만 삭제 가능');
+    }
   }
 }

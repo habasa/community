@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -32,6 +33,12 @@ export class CommentController {
     @Req() req, // 프론트 요청 전부 다 가져옴.
   ): Promise<CommentEntity> {
     return this.commentService.create(postId, createCommentDto, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async removeComment(@Param('id') id: number, @Req() req) {
+    return this.commentService.removeComment(id, req.user);
   }
 }
 

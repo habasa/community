@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PostInterface } from './interface/post.interface';
 import { PostEntity } from './post.entity';
 import { Repository } from 'typeorm';
@@ -36,7 +36,16 @@ export class PostService {
     return this.postRepository.findOne({ where: { id } });
   }
 
-  async remove(id: number): Promise<void> {
-    await this.postRepository.delete(id);
+  async remove(id: number, user): Promise<void> {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+
+    if (post?.user.id === user.id) {
+      await this.postRepository.delete(id);
+    } else {
+      throw new UnauthorizedException('본인의 게시글만 삭제 가능');
+    }
   }
 }
