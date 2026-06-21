@@ -24,6 +24,8 @@ export default function PostDetail() {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<CommentData[]>([]);
   const [comment, setComment] = useState("");
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   const fetchComments = () => {
     api(`/comment/post/${id}`).then(setComments).catch(() => {});
@@ -35,6 +37,21 @@ export default function PostDetail() {
       .catch(() => {});
     fetchComments();
   }, [id]);
+
+  const handleLike = async () => {
+    try {
+      await api(`/like/post/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setLiked((prev) => !prev);
+      setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+    } catch {
+      alert("로그인이 필요합니다.");
+    }
+  };
 
   const handleDelete = async () => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
@@ -100,12 +117,20 @@ export default function PostDetail() {
         <div className="mt-6 whitespace-pre-wrap leading-relaxed">
           {post.content}
         </div>
-        <button
-          onClick={handleDelete}
-          className="mt-4 text-sm text-red-500 hover:underline"
-        >
-          삭제
-        </button>
+        <div className="mt-4 flex items-center gap-4">
+          <button
+            onClick={handleLike}
+            className={`text-sm px-3 py-1 rounded border ${liked ? "bg-red-500 text-white border-red-500" : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"}`}
+          >
+            {liked ? "♥" : "♡"} 좋아요 {likeCount > 0 && likeCount}
+          </button>
+          <button
+            onClick={handleDelete}
+            className="text-sm text-red-500 hover:underline"
+          >
+            삭제
+          </button>
+        </div>
       </article>
 
       <section className="mt-10 border-t pt-6">

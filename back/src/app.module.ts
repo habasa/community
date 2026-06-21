@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CommentModule } from './comment/comment.module';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CommentModule } from './comment/comment.module';
     UserModule,
     CommentModule,
     AuthModule,
+    LikeModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
