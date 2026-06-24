@@ -2,6 +2,7 @@ import { LikeEntity } from 'src/like/like.entity';
 import { UserEntity } from 'src/user/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -26,4 +27,7 @@ export class PostEntity {
 
   @Column()
   content: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

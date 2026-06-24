@@ -21,7 +21,15 @@ export class PostService {
   }
 
   // 게시글 하나 상세
-  async findOne(id: number): Promise<any> {
+  async findOne(id: number, userId: number | null): Promise<any> {
+    let isLiked = false;
+    if (userId) {
+      const like = await this.likeRepository.findOne({
+        where: { post: { id }, user: { id: userId } },
+      });
+      isLiked = !!like;
+    }
+
     const likeCount = await this.likeRepository.count({
       where: { post: { id } },
     });
@@ -31,7 +39,7 @@ export class PostService {
       relations: { user: true },
     });
 
-    return { ...post, likeCount };
+    return { ...post, likeCount, isLiked };
   }
 
   async create(createPostDto: CreatePostDto, user): Promise<PostEntity> {

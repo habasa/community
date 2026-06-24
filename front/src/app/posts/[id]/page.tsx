@@ -31,10 +31,21 @@ export default function PostDetail() {
     api(`/comment/post/${id}`).then(setComments).catch(() => {});
   };
 
-  useEffect(() => {
-    api(`/posts/${id}`)
-      .then(setPost)
+  const fetchPost = () => {
+    const token = localStorage.getItem("token");
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+    api(`/posts/${id}`, { headers })
+      .then((data) => {
+        setPost(data);
+        setLiked(data.isLiked ?? false);
+        setLikeCount(data.likeCount ?? 0);
+      })
       .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchPost();
     fetchComments();
   }, [id]);
 

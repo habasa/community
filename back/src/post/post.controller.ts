@@ -15,10 +15,14 @@ import { PostEntity } from './post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post-dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('posts')
 export class PostController {
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    private jwtService: JwtService,
+  ) {}
 
   @Get()
   async findAll(): Promise<PostInterface[]> {
@@ -26,8 +30,18 @@ export class PostController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
-    return this.postService.findOne(id);
+  async findOne(@Param('id') id: number, @Req() req) {
+    const userToken = req.headers['authorization']?.split(' ')[1];
+
+    let userId = null;
+    if (userToken) {
+      const decoded = this.jwtService.verify(userToken);
+      userId = decoded.id;
+      const result = this.postService.findOne(id, userId);
+      return result;
+    } else {
+      return this.postService.findOne(id, userId);
+    }
   }
 
   @UseGuards(JwtAuthGuard)

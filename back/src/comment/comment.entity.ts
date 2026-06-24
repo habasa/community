@@ -2,6 +2,7 @@ import { PostEntity } from 'src/post/post.entity';
 import { UserEntity } from 'src/user/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -23,6 +24,9 @@ export class CommentEntity {
 
   @Column()
   content: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }
 
 // { onDelete: 'CASCADE' } 연관된 데이터 삭제 기능 / 부모가 삭제되면 자식도 같이 삭제
